@@ -4,6 +4,8 @@ import MainLayout from "../components/MainLayout";
 import { colors } from "../styles/themes";
 import { loginWithGitHub, onAuthStateChanged } from "../firebase/client";
 import { useEffect, useState } from "react";
+import Avatar from "../components/Avatar/Index";
+import Logo from "../components/Icons/Logo";
 
 export default function Home() {
   const [userE, setUser] = useState(undefined);
@@ -27,8 +29,8 @@ export default function Home() {
     <>
       <MainLayout>
         <section>
-          <img src="/twitter-logo.png" alt="logo" />
-          <h1>devTweet</h1>
+          <Logo width="100" />
+          <h1>Devtweet</h1>
           <h2>talk about bugs, code and coffe!</h2>
           <div>
             {userE === null && (
@@ -39,8 +41,11 @@ export default function Home() {
             )}
             {userE && userE.avatar && (
               <div>
-                <img src={userE.avatar} />
-                <strong>{userE.userName}</strong>
+                <Avatar
+                  src={userE.avatar}
+                  alt={userE.userName}
+                  text={userE.userName}
+                />
               </div>
             )}
           </div>
@@ -62,6 +67,7 @@ export default function Home() {
         h1 {
           color: ${colors.primary};
           font-Weight: : 800;
+          font-size: 32px;
           margin-Bottom: 0
         }
 

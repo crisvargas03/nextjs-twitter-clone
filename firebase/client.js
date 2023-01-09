@@ -24,10 +24,10 @@ const mapUserFromFirebaseToUser = (user) => {
     email,
   };
 };
-
 export const onAuthStateChanged = (onChange) => {
   return firebase.auth().onAuthStateChanged((user) => {
-    const normalizedUser = mapUserFromFirebaseToUser(user);
+    const normalizedUser = user ? mapUserFromFirebaseToUser(user) : null;
+
     onChange(normalizedUser);
   });
 };

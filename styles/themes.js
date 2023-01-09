@@ -4,8 +4,8 @@ export const fonts = {
 export const colors = {
   black: "#000000",
   white: "ffffff",
-  primary: "#0099ff",
-  secondary: "#1c5480",
+  primary: "#0049ff",
+  secondary: "#09f",
 };
 
 export const breackpoints = {

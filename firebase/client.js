@@ -1,6 +1,7 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -55,6 +56,7 @@ export const addDevit = ({ avatar, content, userID, userName }) => {
 export const fetchLatestDevits = () => {
   return database
     .collection("devits")
+    .orderBy("createAt", "desc")
     .get()
     .then(({ docs }) => {
       return docs.map((doc) => {
@@ -62,16 +64,18 @@ export const fetchLatestDevits = () => {
         const id = doc.id;
         const { createAt } = data;
 
-        const date = new Date(createAt.seconds * 1000);
-        const normalizedCreatedAt = new Intl.DateTimeFormat("es-ES").format(
-          date
-        );
-
         return {
           ...data,
           id,
-          createdAt: normalizedCreatedAt,
+          createdAt: +createAt.toDate(),
         };
       });
     });
+};
+
+export const uploadImage = (file) => {
+  const storage = getStorage();
+  const spaceRef = ref(storage, `images/${file.name}`);
+  const task = uploadBytesResumable(spaceRef, file);
+  return task;
 };

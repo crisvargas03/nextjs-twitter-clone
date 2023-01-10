@@ -15,13 +15,16 @@ const firebaseConfig = {
 
 !firebase.apps.length && firebase.initializeApp(firebaseConfig);
 
+const database = firebase.firestore();
+
 const mapUserFromFirebaseToUser = (user) => {
   // console.log(user);
-  const { displayName, email, photoURL } = user;
+  const { displayName, email, photoURL, uid } = user;
   return {
     avatar: photoURL,
     userName: displayName,
     email,
+    uid,
   };
 };
 export const onAuthStateChanged = (onChange) => {
@@ -35,4 +38,40 @@ export const onAuthStateChanged = (onChange) => {
 export const loginWithGitHub = () => {
   const githubProvider = new firebase.auth.GithubAuthProvider();
   return firebase.auth().signInWithPopup(githubProvider);
+};
+
+export const addDevit = ({ avatar, content, userID, userName }) => {
+  return database.collection("devits").add({
+    avatar,
+    content,
+    userID,
+    userName,
+    createAt: firebase.firestore.Timestamp.fromDate(new Date()),
+    likesCount: 0,
+    sharedCount: 0,
+  });
+};
+
+export const fetchLatestDevits = () => {
+  return database
+    .collection("devits")
+    .get()
+    .then(({ docs }) => {
+      return docs.map((doc) => {
+        const data = doc.data();
+        const id = doc.id;
+        const { createAt } = data;
+
+        const date = new Date(createAt.seconds * 1000);
+        const normalizedCreatedAt = new Intl.DateTimeFormat("es-ES").format(
+          date
+        );
+
+        return {
+          ...data,
+          id,
+          createdAt: normalizedCreatedAt,
+        };
+      });
+    });
 };
